@@ -79,21 +79,15 @@ def get_protein_sequence(uniprot_id: str, timeout: int = 30):
     raise Exception(f"Can not find {uniprot_id}")
 
 
-def _validate_protein_sequence(sequence: str):
-    cleaned_seq = sequence.strip().upper()
-    invalid_aas = [aa for aa in cleaned_seq if aa not in all_amino_acids]
-    if invalid_aas:
-        raise ValueError(f"Sequence contains invalid amino acids: {', '.join(invalid_aas)}")
-    return cleaned_seq
-
-
 def get_protein_physicochemical_features(sequence: str):
-    cleaned_seq = _validate_protein_sequence(sequence)
-    seq_len = len(cleaned_seq)
+    sequence = sequence.strip().upper()
+    cleaned_seq = ''.join([aa for aa in sequence if aa in all_amino_acids])
     
     try:
         analysed_seq = ProteinAnalysis(cleaned_seq)
         features = {}
+        
+        seq_len = len(cleaned_seq)
         
         features.update({
             "sequence_length": float(seq_len),
